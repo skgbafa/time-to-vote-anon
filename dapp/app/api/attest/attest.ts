@@ -1,5 +1,6 @@
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
+import QuickNode from '@quicknode/sdk';
 
 export const EASContractAddress = "0x1a5650d0ecbca349dd84bafa85790e3e6955eb84";
 
@@ -49,7 +50,10 @@ export async function attest(recipient: string) {
 
 export const hasMainnetTransactions = async (accountAddress: string) => {
     const provider = new ethers.providers.InfuraProvider("mainnet", process.env.INFURA_API_KEY);
-
+    const qn = new QuickNode.API({
+        graphApiKey: process.env.QUICKNODE_API_KEY,
+        defaultChain: 'ethereum',
+      });
     try {
         const transactionCount = await provider.getTransactionCount(accountAddress);
         console.log(`Transaction count for the account address ${accountAddress}: `, transactionCount);
