@@ -6,12 +6,14 @@ This project is building a modular voting system that can be used to conduct ele
 
 Registration is aimed to be widely compatible with various credentials and identity systems (both on and off-chain). The voting contract is designed to be modular and allow for different voting schemes to be implemented. The first implementation will be a simple single choice vote, but the contract is designed to be extensible to support more complex voting schemes.
 
-The main goal is for digital elections that are straightforward to conduct and easy to verify. The system is designed to be as simple as possible, while still being secure and anonymous. 
+The main goal is for digital elections that are straightforward to conduct and easy to verify. The system is designed to be as simple as possible, while still being secure and anonymous.
 
 Some potential use cases:
 
 - A media organization running a vote limited to digital passport holders of a specific country
 - Holders of a certain professional credential voting on a proposal that affects the industry
+- People with a specific diagnosis being able to vote on whether a specific medicine should be approved by a regulator
+- Code contributors to an open source project voting on a proposal
 - Member of a network state voting on a proposal that affects the network
 
 ## Getting Started
