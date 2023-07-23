@@ -19,7 +19,7 @@ function HomePage() {
       <h2 className="text-2xl font-bold">Time to vote, anon</h2>
       <h3 className="text-xl">Verfiable, Anonymous voting for everyone</h3>
       <p className="text-xl p-4 px-32">This project presents a <span className="font-bold">secure</span> and <span className="font-bold">anonymous</span> modular voting system. This has registration system for verifying and registering eligible participants and a voting system for collecting ballots and tallying results. TTVA is built to be compatible with various credentials and identity systems, aiming for <span className="font-bold">digital elections</span> that are  <span className="font-bold">simple and easy to verify yet secure</span>. Powered by <span className="font-bold">Ethereum Attestation Service</span> and ZAMA.ai's <span className="font-bold"> FHEVM Devnet (Fully Homomorphic Encryption)</span>. Some potential use cases of a verifiable voting system is below.</p>
-      <Carousel autoPlay infiniteLoop interval={7500} showStatus={false} showIndicators={false} showThumbs={false}>
+      <Carousel autoPlay infiniteLoop interval={5000} showStatus={false} showIndicators={false} showThumbs={false}>
         {descriptionArray.map((description, idx) => (
           <div key={idx} className="p-8 bg-gray-100 rounded px-4">
             <p className="text-2xl">{description}</p>
