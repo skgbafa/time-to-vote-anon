@@ -1,0 +1,276 @@
+|-- layout.tsx
+|-- page.tsx
+|-- providers.tsx
+|-- register
+        |-- page.tsx
+|-- tally
+        |-- page.tsx
+|-- vote
+        |-- page.tsx
+
+layout.tsx
+```
+import "../styles/global.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import { Providers } from "./providers";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+
+function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>
+          <div
+          className="bg-gray-100"
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: 12,
+            }}
+          >
+            <ConnectButton />
+          </div>
+          <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          {children}
+
+          </div>
+        </Providers>
+      </body>
+    </html>
+  );
+}
+
+export default RootLayout;
+
+```
+
+page.tsx
+```
+import React from 'react';
+import { Button } from 'antd';
+import Link from 'next/link'
+
+function HomePage() {
+    const handlePageTransition = (pageName: string) => {
+       // handle button click here
+    };
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <h2 className="text-2xl font-bold">Time to vote, anon</h2>
+      <p className="text-lg">Project Description</p>
+      <div className="flex space-x-4">
+        <Link href="/register"><Button>Register</Button></Link>
+        <Link href="/vote"><Button>Vote</Button></Link>
+        <Link href="/tally"><Button>Tally</Button></Link>
+      </div>
+    </div>
+  );
+}
+export default HomePage;
+```
+
+providers.tsx
+```
+'use client';
+
+import * as React from 'react';
+import {
+  RainbowKitProvider,
+  getDefaultWallets,
+  connectorsForWallets,
+} from '@rainbow-me/rainbowkit';
+import {
+  argentWallet,
+  trustWallet,
+  ledgerWallet,
+} from '@rainbow-me/rainbowkit/wallets';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import {
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  zora,
+  goerli,
+} from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
+
+
+const FHEVM = {
+    id: 8011,
+    name: "Fhenix Devnet",
+    network: "fhenix-devnet",
+    nativeCurrency: {
+        name: "Ether",
+        symbol: "FHE",
+        decimals: 18,
+    },
+    rpcUrls: {
+        default: {
+            http: ["https://devnet.fhenix.io/"],
+            webSocket: ["wss://devnet.fhenix.io/ws"],
+        },
+        public: {
+            http: ["https://devnet.fhenix.io/"],
+            webSocket: ["wss://devnet.fhenix.io/ws"],
+        },
+    },
+    blockExplorers: {
+        default: {
+            name: "fhenixExplorer",
+            url: "https://fhenix.explorer.zama.ai",
+        },
+    },
+    contracts: {
+        multicall3: {
+            address: "0xF9cda624FBC7e059355ce98a31693d299FACd963",
+        },
+    },
+    testnet: true,
+  };
+  
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [
+    mainnet,
+    FHEVM as any,
+    goerli,
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+  ],
+  [publicProvider()]
+);
+
+const projectId = 'YOUR_PROJECT_ID';
+
+const { wallets } = getDefaultWallets({
+  appName: 'RainbowKit demo',
+  projectId,
+  chains,
+});
+
+const demoAppInfo = {
+  appName: 'Rainbowkit Demo',
+};
+
+const connectors = connectorsForWallets([
+  ...wallets,
+  {
+    groupName: 'Other',
+    wallets: [
+      argentWallet({ projectId, chains }),
+      trustWallet({ projectId, chains }),
+      ledgerWallet({ projectId, chains }),
+    ],
+  },
+]);
+
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient,
+  webSocketPublicClient,
+});
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  return (
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains} appInfo={demoAppInfo}>
+        {mounted && children}
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
+}
+
+```
+
+page.tsx
+```
+'use client';
+
+import React from 'react';
+import { Button } from 'antd';
+import Link from 'next/link';
+
+function RegisterPage() {
+  
+  const handleMint = () => {
+    console.log('Minting...');
+  };
+  
+
+  const handleRegister = () => {
+    console.log('Registering...');
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <h2 className="text-2xl font-bold">Requirements</h2>
+      <p className="text-lg">Must have project NFT to register to vote</p>
+      <div className="flex space-x-4">
+        <Button onClick={handleMint}>Mint</Button>
+        <Button onClick={handleRegister}>Register</Button>
+        <Link href="/"><Button>Back</Button></Link>
+      </div>
+    </div>
+  );
+}
+
+export default RegisterPage;
+```
+
+page.tsx
+```
+"use client";
+
+import React from 'react';
+import { Button } from 'antd';
+import Link from 'next/link';
+
+function TallyPage() {
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <h2 className="text-2xl font-bold">Tally</h2>
+      <p className="text-lg">Count the votes in a privacy preserving but verifiably accurate way</p>
+      <div className="flex space-x-4">
+        <Button>Count Ballots</Button>
+        <Link href="/"><Button>Back</Button></Link>
+      </div>
+    </div>
+  );
+}
+
+export default TallyPage;
+```
+
+page.tsx
+```
+"use client";
+
+import React from 'react';
+import { Button } from 'antd';
+import Link from 'next/link';
+
+function VotePage() {
+    const handleVote = (voteOption: string) => {
+        // handle vote here
+    };
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <h2 className="text-2xl font-bold">Vote</h2>
+      <p className="text-lg">Question 1: ...? </p>
+      <div className="flex space-x-4">
+        <Button onClick={() => handleVote('option1')}>Option 1</Button>
+        <Button onClick={() => handleVote('option2')}>Option 2</Button>
+        <Button onClick={() => handleVote('submit')}>Submit Ballot</Button>
+        <Link href="/"><Button>Back</Button></Link>
+      </div>
+    </div>
+  );
+}
+
+export default VotePage;
+```
